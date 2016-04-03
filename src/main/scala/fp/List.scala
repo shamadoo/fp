@@ -88,10 +88,6 @@ object List {
     case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
   }
 
-  def foldRightViaFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B = {
-    foldLeft(reverse(as), z)((acc, x) => f(x, acc))
-  }
-
   def length[A](l: List[A]): Int = foldRight(l, 0)((_, acc) => acc + 1)
 
   def map[A,B](l: List[A])(f: A => B): List[B] = foldRightViaFoldLeft(l, List[B]())((x, acc) => Cons(f(x), acc))
@@ -106,11 +102,15 @@ object List {
 
   def flatMap[A,B](l: List[A])(f: A => List[B]): List[B] = concat(map(l)(f))
 
-  def filterFromFlatMap[A](l: List[A])(f: A => Boolean): List[A] = flatMap(l)(x => if (f(x)) List(x) else Nil)
-
   def zipWith[A,B,C](a: List[A], b: List[B])(f: (A,B) => C): List[C] = (a,b) match {
     case (Nil, _) => Nil
     case (_, Nil) => Nil
     case (Cons(h1,t1), Cons(h2,t2)) => Cons(f(h1,h2), zipWith(t1,t2)(f))
+  }
+
+  protected def filterFromFlatMap[A](l: List[A])(f: A => Boolean): List[A] = flatMap(l)(x => if (f(x)) List(x) else Nil)
+
+  protected def foldRightViaFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B = {
+    foldLeft(reverse(as), z)((acc, x) => f(x, acc))
   }
 }
