@@ -78,7 +78,7 @@ object ImperativeAndLazyIO {
   This is called _lazy I/O_, and it's problematic for a number of
   reasons, discussed in the book text. However, it would be nice to
   recover the same high-level, compositional style we are used to
-  from our use of `List` and `Stream`.
+  from our use of `FPList` and `Stream`.
 
                              */
 }
@@ -112,7 +112,7 @@ object SimpleStreamTransducers {
 
     /*
      * `Process` can be thought of as a sequence of values of type `O`
-     * and many of the operations that would be defined for `List[O]`
+     * and many of the operations that would be defined for `FPList[O]`
      * can be defined for `Process[I,O]`, for instance `map`, `++` and
      * `flatMap`. The definitions are analogous.
      */

@@ -44,14 +44,14 @@ trait Monad[F[_]] extends Functor[F] {
   def traverse[A,B](la: List[A])(f: A => F[B]): F[List[B]] =
     la.foldRight(unit(List[B]()))((a, mlb) => map2(f(a), mlb)(_ :: _))
 
-  // For `List`, the `replicateM` function will generate a list of lists.
+  // For `FPList`, the `replicateM` function will generate a list of lists.
   // It will contain all the lists of length `n` with elements selected from the
   // input list.
   // For `Option`, it will generate either `Some` or `None` based on whether the
   // input is `Some` or `None`. The `Some` case will contain a list of length `n`
   // that repeats the element in the input `Option`.
   // The general meaning of `replicateM` is described very well by the
-  // implementation `sequence(List.fill(n)(ma))`. It repeats the `ma` monadic value
+  // implementation `sequence(FPList.fill(n)(ma))`. It repeats the `ma` monadic value
   // `n` times and gathers the results in a single value, where the monad `M`
   // determines how values are actually combined.
 
@@ -59,7 +59,7 @@ trait Monad[F[_]] extends Functor[F] {
   def _replicateM[A](n: Int, ma: F[A]): F[List[A]] =
     if (n <= 0) unit(List[A]()) else map2(ma, _replicateM(n - 1, ma))(_ :: _)
 
-  // Using `sequence` and the `List.fill` function of the standard library:
+  // Using `sequence` and the `FPList.fill` function of the standard library:
   def replicateM[A](n: Int, ma: F[A]): F[List[A]] =
     sequence(List.fill(n)(ma))
 

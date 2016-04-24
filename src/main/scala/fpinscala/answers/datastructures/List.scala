@@ -1,13 +1,13 @@
 package fpinscala.answers.datastructures
 
-sealed trait List[+A] // `List` data type, parameterized on a type, `A`
-case object Nil extends List[Nothing] // A `List` data constructor representing the empty list
-/* Another data constructor, representing nonempty lists. Note that `tail` is another `List[A]`,
+sealed trait List[+A] // `FPList` data type, parameterized on a type, `A`
+case object Nil extends List[Nothing] // A `FPList` data constructor representing the empty list
+/* Another data constructor, representing nonempty lists. Note that `tail` is another `FPList[A]`,
 which may be `Nil` or another `Cons`.
  */
 case class Cons[+A](head: A, tail: List[A]) extends List[A]
 
-object List { // `List` companion object. Contains functions for creating and working with lists.
+object List { // `FPList` companion object. Contains functions for creating and working with lists.
   def sum(ints: List[Int]): Int = ints match { // A function that uses pattern matching to add up a list of integers
     case Nil => 0 // The sum of the empty list is 0.
     case Cons(x,xs) => x + sum(xs) // The sum of a list starting with `x` is `x` plus the sum of the rest of the list.
@@ -141,10 +141,10 @@ object List { // `List` companion object. Contains functions for creating and wo
   is it replaces the `Nil` constructor of the list with the `z` argument, and it replaces the `Cons` constructor with
   the given function, `f`. If we just supply `Nil` for `z` and `Cons` for `f`, then we get back the input list.
 
-  foldRight(Cons(1, Cons(2, Cons(3, Nil))), Nil:List[Int])(Cons(_,_))
-  Cons(1, foldRight(Cons(2, Cons(3, Nil)), Nil:List[Int])(Cons(_,_)))
-  Cons(1, Cons(2, foldRight(Cons(3, Nil), Nil:List[Int])(Cons(_,_))))
-  Cons(1, Cons(2, Cons(3, foldRight(Nil, Nil:List[Int])(Cons(_,_)))))
+  foldRight(Cons(1, Cons(2, Cons(3, Nil))), Nil:FPList[Int])(Cons(_,_))
+  Cons(1, foldRight(Cons(2, Cons(3, Nil)), Nil:FPList[Int])(Cons(_,_)))
+  Cons(1, Cons(2, foldRight(Cons(3, Nil), Nil:FPList[Int])(Cons(_,_))))
+  Cons(1, Cons(2, Cons(3, foldRight(Nil, Nil:FPList[Int])(Cons(_,_)))))
   Cons(1, Cons(2, Cons(3, Nil)))
   */
 
@@ -177,7 +177,7 @@ object List { // `List` companion object. Contains functions for creating and wo
   The other implementations build up a chain of functions which, when called, results in the operations being performed
   with the correct associativity. We are calling `foldRight` with the `B` type being instantiated to `B => B`, then
   calling the built up function with the `z` argument. Try expanding the definitions by substituting equals for equals
-  using a simple example, like `foldLeft(List(1,2,3), 0)(_ + _)` if this isn't clear. Note these implementations are
+  using a simple example, like `foldLeft(FPList(1,2,3), 0)(_ + _)` if this isn't clear. Note these implementations are
   more of theoretical interest - they aren't stack-safe and won't work for large lists.
   */
   def foldRightViaFoldLeft[A,B](l: List[A], z: B)(f: (A,B) => B): B =
@@ -206,7 +206,7 @@ object List { // `List` companion object. Contains functions for creating and wo
   introduced with the `def` keyword, and function values, which are the first-class objects we can pass to other
   functions, put in collections, and so on. This is a case where Scala lets us pretend the distinction doesn't exist.
   In other cases, you'll be forced to write `append _` (to convert a `def` to a function value)
-  or even `(x: List[A], y: List[A]) => append(x,y)` if the function is polymorphic and the type arguments aren't known.
+  or even `(x: FPList[A], y: FPList[A]) => append(x,y)` if the function is polymorphic and the type arguments aren't known.
   */
   def concat[A](l: List[List[A]]): List[A] =
     foldRight(l, Nil:List[A])(append)
@@ -220,7 +220,7 @@ object List { // `List` companion object. Contains functions for creating and wo
   /*
   A natural solution is using `foldRight`, but our implementation of `foldRight` is not stack-safe. We can
   use `foldRightViaFoldLeft` to avoid the stack overflow (variation 1), but more commonly, with our current
-  implementation of `List`, `map` will just be implemented using local mutation (variation 2). Again, note that the
+  implementation of `FPList`, `map` will just be implemented using local mutation (variation 2). Again, note that the
   mutation isn't observable outside the function, since we're only mutating a buffer that we've allocated.
   */
   def map[A,B](l: List[A])(f: A => B): List[B] =

@@ -109,7 +109,7 @@ object IO1 {
   // action we wished to repeat 5 times (ex: `echo` or `readInts`).
   val prompts: IO[Unit] = replicateM_(5)(converter)
 
-  // An `IO[List[String]]` that will read 10 lines from the console and
+  // An `IO[FPList[String]]` that will read 10 lines from the console and
   // return the list of results.
   val lines: IO[List[String]] = replicateM(10)(ReadLine)
 
@@ -214,7 +214,7 @@ object IO2aTests {
   /*
   Pg 240: REPL session has a typo, should be:
 
-  val g = List.fill(100000)(f).foldLeft(f) {
+  val g = FPList.fill(100000)(f).foldLeft(f) {
     (a, b) => x => Suspend(() => ()).flatMap { _ => a(x).flatMap(b)}
   }
 
@@ -222,7 +222,7 @@ object IO2aTests {
 
   def suspend[A](a: => IO[A]) = Suspend(() => ()).flatMap { _ => a }
 
-  val g = List.fill(100000)(f).foldLeft(f) {
+  val g = FPList.fill(100000)(f).foldLeft(f) {
     (a, b) => x => suspend { a(x).flatMap(b) }
   }
    */
